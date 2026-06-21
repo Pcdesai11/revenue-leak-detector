@@ -18,6 +18,13 @@ npm run dev
 
 Then open the URL it prints (usually `http://localhost:5173`).
 
+**Requires Node 18+.** This project uses Vite 5 (stable), not the newer Vite 8 —
+an earlier version of this zip shipped with Vite 8's experimental `rolldown`
+bundler, which has a known native-binding bug on some platforms (especially
+Windows ARM64). If you previously hit a `Cannot find native binding` error,
+delete `node_modules` and `package-lock.json` and re-run `npm install` with
+this version of `package.json`.
+
 ## Project structure
 
 ```
