@@ -1,6 +1,7 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import Nav from '../components/Nav';
+import Reveal from '../components/Reveal';
 import { useCountUp } from '../hooks/useCountUp';
 
 function HeroCard() {
@@ -23,7 +24,11 @@ function HeroCard() {
           revealed ? 'animate-pulse-ring' : 'opacity-0'
         }`}
       />
-      <div className="rounded-lg border border-line bg-white p-6 pb-5 shadow-sm">
+      <div
+        className={`rounded-lg border border-line bg-white p-6 pb-5 shadow-sm transition-shadow ${
+          revealed ? 'animate-card-glow' : ''
+        }`}
+      >
         <div className="mb-4 flex items-start justify-between">
           <div>
             <div className="text-[17px] font-medium">Harborline Studio</div>
@@ -49,10 +54,42 @@ function HeroCard() {
             revealed ? 'opacity-100' : 'opacity-0'
           }`}
         >
-          Paying <span className="font-serif font-semibold text-gold">25% less</span> than similar
-          long-term customers. Worth a look.
+          Paying{' '}
+          <span className="relative inline-block">
+            <span className="relative z-10 font-serif font-semibold text-gold">25% less</span>
+            <span
+              className={`absolute -bottom-0.5 left-0 h-[2px] w-full origin-left bg-gold/40 ${
+                revealed ? 'animate-underline-draw' : 'scale-x-0'
+              }`}
+              style={{ animationDelay: '0.3s' }}
+            />
+          </span>{' '}
+          than similar long-term customers. Worth a look.
         </div>
       </div>
+    </div>
+  );
+}
+
+function LiveTicker() {
+  const [n, setN] = useState(1248);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setN((prev) => prev + Math.floor(Math.random() * 3) + 1);
+    }, 2600);
+    return () => clearInterval(interval);
+  }, []);
+
+  return (
+    <div className="mt-5 flex animate-rise-in items-center gap-2 text-[12.5px] text-ink-faint opacity-0 [animation-delay:0.66s]">
+      <span className="relative flex h-1.5 w-1.5">
+        <span className="absolute inline-flex h-full w-full animate-pulse-dot rounded-full bg-ledger" />
+      </span>
+      <span>
+        <span className="font-medium text-ink-soft">{n.toLocaleString()}</span> customer records
+        compared so far today
+      </span>
     </div>
   );
 }
@@ -66,35 +103,9 @@ function Row({ label, value, last }) {
   );
 }
 
-function Step({ label, body, index }) {
-  const ref = useRef(null);
-  const [inView, setInView] = useState(false);
-
-  useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            setTimeout(() => setInView(true), index * 90);
-            observer.unobserve(entry.target);
-          }
-        });
-      },
-      { threshold: 0.2 }
-    );
-    observer.observe(el);
-    return () => observer.disconnect();
-  }, [index]);
-
+function StepContent({ label, body }) {
   return (
-    <div
-      ref={ref}
-      className={`border-t-2 border-ink pt-4.5 transition-all duration-600 ${
-        inView ? 'translate-y-0 opacity-100' : 'translate-y-3.5 opacity-0'
-      }`}
-    >
+    <div className="border-t-2 border-ink pt-4.5">
       <div className="mb-2 font-serif text-[15px] font-medium text-ledger">{label}</div>
       <div className="text-[14.5px] leading-relaxed text-ink-soft">{body}</div>
     </div>
@@ -118,7 +129,9 @@ export default function Landing() {
       <Nav variant="landing" />
 
       {/* Hero */}
-      <div className="mx-auto grid max-w-[1080px] grid-cols-1 items-center gap-14 px-8 py-16 md:py-24 md:grid-cols-[1.05fr_0.95fr]">
+      <div className="relative">
+        <div className="ledger-texture pointer-events-none absolute inset-0 [mask-image:linear-gradient(to_bottom,black,transparent)]" />
+        <div className="relative mx-auto grid max-w-[1080px] grid-cols-1 items-center gap-14 px-8 py-16 md:py-24 md:grid-cols-[1.05fr_0.95fr]">
         <div>
           <div className="mb-5.5 inline-flex animate-rise-in items-center gap-2 rounded-full bg-ledger-bg px-3 py-1.5 text-[12.5px] font-medium text-ledger opacity-0 [animation-delay:0.1s]">
             Built for agencies &amp; consultants on Stripe
@@ -153,9 +166,12 @@ export default function Landing() {
           <p className="animate-rise-in text-[13px] text-ink-faint opacity-0 [animation-delay:0.56s]">
             Read-only access to Stripe. Nothing is changed without you.
           </p>
+
+          <LiveTicker />
         </div>
 
         <HeroCard />
+        </div>
       </div>
 
       {/* Strip */}
@@ -164,10 +180,10 @@ export default function Landing() {
           Built for the way agencies actually bill
         </div>
         <div className="flex flex-wrap justify-center gap-10 font-serif text-base text-ink-faint">
-          <span>Design &amp; dev studios</span>
-          <span>Marketing retainers</span>
-          <span>Consulting firms</span>
-          <span>Small SaaS shops</span>
+          <span className="transition-colors hover:text-ink">Design &amp; dev studios</span>
+          <span className="transition-colors hover:text-ink">Marketing retainers</span>
+          <span className="transition-colors hover:text-ink">Consulting firms</span>
+          <span className="transition-colors hover:text-ink">Small SaaS shops</span>
         </div>
       </div>
 
@@ -182,66 +198,73 @@ export default function Landing() {
           </h2>
         </div>
         <div className="grid grid-cols-1 gap-7 md:grid-cols-3">
-          <Step
-            index={0}
-            label="Connect"
-            body="Read-only access to Stripe. No write permissions — we never touch your billing, only read it."
-          />
-          <Step
-            index={1}
-            label="Compare"
-            body="We group customers by tenure and billing volume, then check who's priced below similar customers."
-          />
-          <Step
-            index={2}
-            label="Review"
-            body="You get a short list of flags in plain language. Mark them reviewed, or dismiss with a reason — it remembers."
-          />
+          <Reveal delay={0}>
+            <StepContent
+              label="Connect"
+              body="Read-only access to Stripe. No write permissions — we never touch your billing, only read it."
+            />
+          </Reveal>
+          <Reveal delay={90}>
+            <StepContent
+              label="Compare"
+              body="We group customers by tenure and billing volume, then check who's priced below similar customers."
+            />
+          </Reveal>
+          <Reveal delay={180}>
+            <StepContent
+              label="Review"
+              body="You get a short list of flags in plain language. Mark them reviewed, or dismiss with a reason — it remembers."
+            />
+          </Reveal>
         </div>
       </section>
 
       {/* Principle */}
       <section id="principle" className="mx-auto max-w-[1080px] border-t border-line px-8 py-18">
-        <div className="grid grid-cols-1 items-center gap-12 md:grid-cols-[0.9fr_1.1fr]">
-          <div className="font-serif text-2xl leading-snug tracking-tight">
-            We don't tell you what to charge.
-            <br />
-            <span className="text-ledger">We tell you what's worth checking.</span>
+        <Reveal>
+          <div className="grid grid-cols-1 items-center gap-12 md:grid-cols-[0.9fr_1.1fr]">
+            <div className="font-serif text-2xl leading-snug tracking-tight">
+              We don't tell you what to charge.
+              <br />
+              <span className="text-ledger">We tell you what's worth checking.</span>
+            </div>
+            <div className="flex flex-col gap-4.5">
+              <PrincipleItem number={1}>
+                <strong className="font-medium text-ink">The math is plain statistics</strong> —
+                peer comparison, not a guess. The numbers you see are auditable, not invented.
+              </PrincipleItem>
+              <PrincipleItem number={2}>
+                <strong className="font-medium text-ink">We don't know your reasons</strong> — a
+                discount might be intentional. That's why every flag can be dismissed with a note,
+                permanently.
+              </PrincipleItem>
+              <PrincipleItem number={3}>
+                <strong className="font-medium text-ink">You decide, always</strong> — this finds
+                anomalies worth a conversation. It never emails your client or changes a price on
+                its own.
+              </PrincipleItem>
+            </div>
           </div>
-          <div className="flex flex-col gap-4.5">
-            <PrincipleItem number={1}>
-              <strong className="font-medium text-ink">The math is plain statistics</strong> — peer
-              comparison, not a guess. The numbers you see are auditable, not invented.
-            </PrincipleItem>
-            <PrincipleItem number={2}>
-              <strong className="font-medium text-ink">We don't know your reasons</strong> — a
-              discount might be intentional. That's why every flag can be dismissed with a note,
-              permanently.
-            </PrincipleItem>
-            <PrincipleItem number={3}>
-              <strong className="font-medium text-ink">You decide, always</strong> — this finds
-              anomalies worth a conversation. It never emails your client or changes a price on its
-              own.
-            </PrincipleItem>
-          </div>
-        </div>
+        </Reveal>
       </section>
 
       {/* CTA band */}
-      <div className="mx-auto mb-22 max-w-[1016px] rounded-xl bg-ink px-7 py-14 text-center md:px-12">
-        <h2 className="mb-3.5 font-serif text-[28px] font-medium text-paper">
-          See what's hiding in your own Stripe data.
-        </h2>
-        <p className="mb-7 text-[15px] text-[#C9C7BD]">
-          Takes about two minutes to connect. Nothing changes until you say so.
-        </p>
-        <Link
-          to="/dashboard"
-          className="inline-flex items-center gap-1.5 rounded-md border border-paper bg-paper px-5.5 py-3 text-[14.5px] font-medium text-ink transition-colors hover:bg-[#EDEAE0]"
-        >
-          See a live example ↗
-        </Link>
-      </div>
+      <Reveal>
+        <div className="mx-auto mb-22 max-w-[1016px] rounded-xl bg-ink px-7 py-14 text-center transition-transform duration-300 hover:-translate-y-0.5 md:px-12">
+          <h2 className="mb-3.5 font-serif text-[28px] font-medium text-paper">
+            See what's hiding in your own Stripe data.
+          </h2>
+          <p className="mb-7 text-[15px] text-[#C9C7BD]">
+            Takes about two minutes to connect. Nothing changes until you say so.
+          </p>
+          <Link
+            to="/dashboard"
+            className="inline-flex items-center gap-1.5 rounded-md border border-paper bg-paper px-5.5 py-3 text-[14.5px] font-medium text-ink transition-colors hover:bg-[#EDEAE0]"
+          >
+            See a live example ↗
+          </Link>
+        </div>
+      </Reveal>
 
       <footer className="px-8 pb-12 text-center text-[13px] text-ink-faint">
         Revenue Leak Detector — a quiet second look at your pricing.

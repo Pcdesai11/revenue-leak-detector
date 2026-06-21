@@ -84,7 +84,7 @@ export default function Dashboard() {
 
 function SummaryCell({ label, value, flagged }) {
   return (
-    <div className="bg-white px-5 py-4.5">
+    <div className="bg-white px-5 py-4.5 transition-colors hover:bg-paper-warm/60">
       <div className="mb-1.5 text-[11.5px] uppercase tracking-wide text-ink-faint">{label}</div>
       <div className={`font-serif text-[23px] font-medium ${flagged ? 'text-flag' : ''}`}>
         {value}

@@ -14,8 +14,11 @@ export default function FlagCard({ flag, index, onResolve, resolution }) {
     <div
       className={`rounded-lg border bg-white p-6 transition-all duration-500 ${
         entered ? 'translate-y-0 opacity-100' : 'translate-y-3 opacity-0'
-      } ${isResolved ? 'scale-[0.99] opacity-55' : 'border-line hover:border-ink-faint/60'}`}
-      style={{ borderColor: isResolved ? undefined : undefined }}
+      } ${
+        isResolved
+          ? 'scale-[0.99] opacity-55'
+          : 'border-line hover:-translate-y-0.5 hover:border-ink-faint/60 hover:shadow-[0_4px_16px_rgba(28,28,26,0.06)]'
+      }`}
     >
       <div className="mb-3.5 flex items-start justify-between gap-4">
         <div>
