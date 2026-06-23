@@ -12,12 +12,12 @@ export default function FlagCard({ flag, index, onResolve, resolution }) {
 
   return (
     <div
-      className={`rounded-lg border bg-white p-6 transition-all duration-500 ${
+      className={`rounded-lg border bg-paper-warm p-6 transition-all duration-500 ${
         entered ? 'translate-y-0 opacity-100' : 'translate-y-3 opacity-0'
       } ${
         isResolved
           ? 'scale-[0.99] opacity-55'
-          : 'border-line hover:-translate-y-0.5 hover:border-ink-faint/60 hover:shadow-[0_4px_16px_rgba(28,28,26,0.06)]'
+          : 'border-line hover:-translate-y-0.5 hover:border-ink-faint/60 hover:shadow-[0_4px_16px_rgba(28,28,26,0.06)] dark:hover:shadow-[0_4px_16px_rgba(0,0,0,0.3)]'
       }`}
     >
       <div className="mb-3.5 flex items-start justify-between gap-4">
@@ -50,7 +50,7 @@ export default function FlagCard({ flag, index, onResolve, resolution }) {
           <span>Peer range</span>
           <span>{flag.peerHigh}</span>
         </div>
-        <div className="relative h-1.5 rounded-full bg-[#EFEDE5]">
+        <div className="relative h-1.5 rounded-full bg-[#EFEDE5] dark:bg-[#2A2A26]">
           <div
             className="absolute top-0 bottom-0 rounded-full bg-ledger-bg transition-transform duration-700 ease-out"
             style={{
@@ -83,13 +83,13 @@ export default function FlagCard({ flag, index, onResolve, resolution }) {
           <>
             <button
               onClick={() => onResolve(flag.id, 'reviewed')}
-              className="rounded-md border border-ledger bg-ledger px-3.5 py-1.5 text-[13px] font-medium text-white transition-all hover:-translate-y-px hover:bg-[#244e41]"
+              className="rounded-md border border-ledger bg-ledger px-3.5 py-1.5 text-[13px] font-medium text-paper transition-all hover:-translate-y-px hover:bg-[#244e41] dark:text-ink"
             >
               Mark reviewed
             </button>
             <button
               onClick={() => onResolve(flag.id, 'dismissed')}
-              className="rounded-md border border-line bg-white px-3.5 py-1.5 text-[13px] font-medium text-ink transition-all hover:-translate-y-px hover:border-ink-faint"
+              className="rounded-md border border-line bg-paper px-3.5 py-1.5 text-[13px] font-medium text-ink transition-all hover:-translate-y-px hover:border-ink-faint"
             >
               Dismiss — there's a reason
             </button>

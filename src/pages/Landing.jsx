@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import Nav from '../components/Nav';
 import Reveal from '../components/Reveal';
+import TickerTape from '../components/TickerTape';
 import { useCountUp } from '../hooks/useCountUp';
 
 function HeroCard() {
@@ -25,7 +26,7 @@ function HeroCard() {
         }`}
       />
       <div
-        className={`rounded-lg border border-line bg-white p-6 pb-5 shadow-sm transition-shadow ${
+        className={`rounded-lg border border-line bg-paper-warm p-6 pb-5 shadow-sm transition-shadow dark:shadow-none ${
           revealed ? 'animate-card-glow' : ''
         }`}
       >
@@ -96,7 +97,7 @@ function LiveTicker() {
 
 function Row({ label, value, last }) {
   return (
-    <div className={`flex items-baseline justify-between py-2.5 text-[13.5px] ${!last ? 'border-b border-[#F0EEE5]' : ''}`}>
+    <div className={`flex items-baseline justify-between py-2.5 text-[13.5px] ${!last ? 'border-b border-[#F0EEE5] dark:border-[#2A2A26]' : ''}`}>
       <span className="text-ink-faint">{label}</span>
       <span className="font-serif text-[15px] font-medium">{value}</span>
     </div>
@@ -123,10 +124,11 @@ function PrincipleItem({ number, children }) {
   );
 }
 
-export default function Landing() {
+export default function Landing({ isDark, setIsDark }) {
   return (
     <div>
-      <Nav variant="landing" />
+      <Nav variant="landing" isDark={isDark} setIsDark={setIsDark} />
+      <TickerTape />
 
       {/* Hero */}
       <div className="relative">
@@ -157,7 +159,7 @@ export default function Landing() {
             </Link>
             <a
               href="#how"
-              className="inline-flex items-center gap-1.5 rounded-md border border-line bg-white px-5.5 py-3 text-[14.5px] font-medium text-ink transition-transform hover:-translate-y-px hover:border-ink-faint"
+              className="inline-flex items-center gap-1.5 rounded-md border border-line bg-paper-warm px-5.5 py-3 text-[14.5px] font-medium text-ink transition-transform hover:-translate-y-px hover:border-ink-faint"
             >
               How it works
             </a>
@@ -250,8 +252,8 @@ export default function Landing() {
 
       {/* CTA band */}
       <Reveal>
-        <div className="mx-auto mb-22 max-w-[1016px] rounded-xl bg-ink px-7 py-14 text-center transition-transform duration-300 hover:-translate-y-0.5 md:px-12">
-          <h2 className="mb-3.5 font-serif text-[28px] font-medium text-paper">
+        <div className="mx-auto mb-22 max-w-[1016px] rounded-xl bg-[#1C1C1A] px-7 py-14 text-center transition-transform duration-300 hover:-translate-y-0.5 md:px-12">
+          <h2 className="mb-3.5 font-serif text-[28px] font-medium text-[#FAF9F6]">
             See what's hiding in your own Stripe data.
           </h2>
           <p className="mb-7 text-[15px] text-[#C9C7BD]">
@@ -259,7 +261,7 @@ export default function Landing() {
           </p>
           <Link
             to="/dashboard"
-            className="inline-flex items-center gap-1.5 rounded-md border border-paper bg-paper px-5.5 py-3 text-[14.5px] font-medium text-ink transition-colors hover:bg-[#EDEAE0]"
+            className="inline-flex items-center gap-1.5 rounded-md border border-[#FAF9F6] bg-[#FAF9F6] px-5.5 py-3 text-[14.5px] font-medium text-[#1C1C1A] transition-colors hover:bg-[#EDEAE0]"
           >
             See a live example ↗
           </Link>

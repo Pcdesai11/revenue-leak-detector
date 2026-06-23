@@ -5,7 +5,7 @@ import Toast from '../components/Toast';
 import { useCountUp } from '../hooks/useCountUp';
 import { flags as initialFlags, summary } from '../data/flags';
 
-export default function Dashboard() {
+export default function Dashboard({ isDark, setIsDark }) {
   const [resolutions, setResolutions] = useState({});
   const [toast, setToast] = useState({ show: false, message: '' });
 
@@ -29,7 +29,7 @@ export default function Dashboard() {
 
   return (
     <div>
-      <Nav variant="dashboard" />
+      <Nav variant="dashboard" isDark={isDark} setIsDark={setIsDark} />
 
       <div className="mx-auto max-w-[800px] px-6 pb-24 pt-11">
         <header className="mb-9 border-b border-line pb-7.5">
@@ -84,7 +84,7 @@ export default function Dashboard() {
 
 function SummaryCell({ label, value, flagged }) {
   return (
-    <div className="bg-white px-5 py-4.5 transition-colors hover:bg-paper-warm/60">
+    <div className="bg-paper-warm px-5 py-4.5 transition-colors hover:bg-[#EDEAE0] dark:hover:bg-[#222220]">
       <div className="mb-1.5 text-[11.5px] uppercase tracking-wide text-ink-faint">{label}</div>
       <div className={`font-serif text-[23px] font-medium ${flagged ? 'text-flag' : ''}`}>
         {value}
