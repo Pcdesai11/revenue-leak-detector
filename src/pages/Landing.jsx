@@ -26,8 +26,8 @@ function HeroCard() {
         }`}
       />
       <div
-        className={`rounded-lg border border-line bg-paper-warm p-6 pb-5 shadow-sm transition-shadow dark:shadow-none ${
-          revealed ? 'animate-card-glow' : ''
+        className={`rounded-lg border border-line bg-paper-warm p-6 pb-5 shadow-sm transition-all duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] dark:shadow-none ${
+          revealed ? 'animate-card-glow translate-y-0' : 'translate-y-1'
         }`}
       >
         <div className="mb-4 flex items-start justify-between">
@@ -38,21 +38,21 @@ function HeroCard() {
             </div>
           </div>
           <div
-            className={`rounded-md px-2.5 py-1 text-[12.5px] font-medium transition-colors duration-500 ${
-              revealed ? 'bg-flag-bg text-flag' : 'bg-line text-ink-faint'
+            className={`rounded-md px-2.5 py-1 text-[12.5px] font-medium transition-all duration-700 ease-[cubic-bezier(0.34,1.4,0.64,1)] ${
+              revealed ? 'scale-100 bg-flag-bg text-flag' : 'scale-95 bg-line text-ink-faint'
             }`}
           >
             {revealed ? 'Worth a look' : 'Reviewing'}
           </div>
         </div>
 
-        <Row label="Total paid" value={`$${total.toLocaleString()}`} />
-        <Row label="Tenure" value={stage >= 2 ? '3 years' : '—'} />
-        <Row label="vs. similar customers" value={stage >= 2 ? '25% below' : '—'} last />
+        <Row label="Total paid" value={`$${total.toLocaleString()}`} active={stage >= 1} />
+        <Row label="Tenure" value={stage >= 2 ? '3 years' : '—'} active={stage >= 2} />
+        <Row label="vs. similar customers" value={stage >= 2 ? '25% below' : '—'} active={stage >= 2} last />
 
         <div
-          className={`mt-4 min-h-[42px] border-t border-line pt-4 text-[13.5px] leading-relaxed text-ink transition-opacity duration-500 ${
-            revealed ? 'opacity-100' : 'opacity-0'
+          className={`mt-4 min-h-[42px] border-t border-line pt-4 text-[13.5px] leading-relaxed text-ink transition-all duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] ${
+            revealed ? 'translate-y-0 opacity-100' : 'translate-y-2 opacity-0'
           }`}
         >
           Paying{' '}
@@ -88,39 +88,49 @@ function LiveTicker() {
         <span className="absolute inline-flex h-full w-full animate-pulse-dot rounded-full bg-ledger" />
       </span>
       <span>
-        <span className="font-medium text-ink-soft">{n.toLocaleString()}</span> customer records
+        <span className="font-medium tabular-nums text-ink-soft transition-all duration-500">{n.toLocaleString()}</span> customer records
         compared so far today
       </span>
     </div>
   );
 }
 
-function Row({ label, value, last }) {
+function Row({ label, value, last, active = true }) {
   return (
     <div className={`flex items-baseline justify-between py-2.5 text-[13.5px] ${!last ? 'border-b border-[#F0EEE5] dark:border-[#2A2A26]' : ''}`}>
       <span className="text-ink-faint">{label}</span>
-      <span className="font-serif text-[15px] font-medium">{value}</span>
+      <span
+        className={`font-serif text-[15px] font-medium tabular-nums transition-all duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] ${
+          active ? 'translate-y-0 opacity-100' : 'translate-y-1 opacity-30'
+        }`}
+      >
+        {value}
+      </span>
     </div>
   );
 }
 
 function StepContent({ label, body }) {
   return (
-    <div className="border-t-2 border-ink pt-4.5">
-      <div className="mb-2 font-serif text-[15px] font-medium text-ledger">{label}</div>
+    <div className="group border-t-2 border-ink pt-4.5 transition-colors duration-300 hover:border-ledger">
+      <div className="mb-2 font-serif text-[15px] font-medium text-ledger transition-transform duration-300 group-hover:translate-x-0.5">
+        {label}
+      </div>
       <div className="text-[14.5px] leading-relaxed text-ink-soft">{body}</div>
     </div>
   );
 }
 
-function PrincipleItem({ number, children }) {
+function PrincipleItem({ number, children, delay = 0 }) {
   return (
-    <div className="flex items-start gap-3.5 text-[14.5px] leading-relaxed text-ink-soft">
-      <span className="mt-px flex h-5.5 w-5.5 flex-shrink-0 items-center justify-center rounded-full bg-ledger-bg text-[12px] font-semibold text-ledger">
-        {number}
-      </span>
-      <span>{children}</span>
-    </div>
+    <Reveal delay={delay}>
+      <div className="flex items-start gap-3.5 text-[14.5px] leading-relaxed text-ink-soft transition-colors duration-300 hover:text-ink">
+        <span className="mt-px flex h-5.5 w-5.5 flex-shrink-0 items-center justify-center rounded-full bg-ledger-bg text-[12px] font-semibold text-ledger transition-transform duration-300 hover:scale-110">
+          {number}
+        </span>
+        <span>{children}</span>
+      </div>
+    </Reveal>
   );
 }
 
@@ -132,7 +142,7 @@ export default function Landing({ isDark, setIsDark }) {
 
       {/* Hero */}
       <div className="relative">
-        <div className="ledger-texture pointer-events-none absolute inset-0 [mask-image:linear-gradient(to_bottom,black,transparent)]" />
+        <div className="ledger-texture pointer-events-none absolute inset-0 animate-ledger-drift [mask-image:linear-gradient(to_bottom,black,transparent)]" />
         <div className="relative mx-auto grid max-w-[1080px] grid-cols-1 items-center gap-14 px-8 py-16 md:py-24 md:grid-cols-[1.05fr_0.95fr]">
         <div>
           <div className="mb-5.5 inline-flex animate-rise-in items-center gap-2 rounded-full bg-ledger-bg px-3 py-1.5 text-[12.5px] font-medium text-ledger opacity-0 [animation-delay:0.1s]">
@@ -153,13 +163,13 @@ export default function Landing({ isDark, setIsDark }) {
           <div className="mb-7 flex animate-rise-in gap-3 opacity-0 [animation-delay:0.46s]">
             <Link
               to="/dashboard"
-              className="inline-flex items-center gap-1.5 rounded-md border border-ink bg-ink px-5.5 py-3 text-[14.5px] font-medium text-paper transition-transform hover:-translate-y-px hover:bg-[#313129]"
+              className="interactive inline-flex items-center gap-1.5 rounded-md border border-ink bg-ink px-5.5 py-3 text-[14.5px] font-medium text-paper hover:bg-[#313129]"
             >
-              See a live example ↗
+              See a live example <span className="inline-block transition-transform duration-300 group-hover:translate-x-0.5">↗</span>
             </Link>
             <a
               href="#how"
-              className="inline-flex items-center gap-1.5 rounded-md border border-line bg-paper-warm px-5.5 py-3 text-[14.5px] font-medium text-ink transition-transform hover:-translate-y-px hover:border-ink-faint"
+              className="interactive inline-flex items-center gap-1.5 rounded-md border border-line bg-paper-warm px-5.5 py-3 text-[14.5px] font-medium text-ink hover:border-ink-faint"
             >
               How it works
             </a>
@@ -177,28 +187,36 @@ export default function Landing({ isDark, setIsDark }) {
       </div>
 
       {/* Strip */}
-      <div className="mx-auto max-w-[1080px] px-8 pb-16 text-center">
-        <div className="mb-4.5 text-[12.5px] uppercase tracking-wide text-ink-faint">
-          Built for the way agencies actually bill
-        </div>
-        <div className="flex flex-wrap justify-center gap-10 font-serif text-base text-ink-faint">
-          <span className="transition-colors hover:text-ink">Design &amp; dev studios</span>
-          <span className="transition-colors hover:text-ink">Marketing retainers</span>
-          <span className="transition-colors hover:text-ink">Consulting firms</span>
-          <span className="transition-colors hover:text-ink">Small SaaS shops</span>
-        </div>
-      </div>
-
-      {/* How it works */}
-      <section id="how" className="mx-auto max-w-[1080px] border-t border-line px-8 py-18">
-        <div className="mb-12 max-w-[540px]">
-          <div className="mb-2.5 text-[12.5px] uppercase tracking-wide text-ink-faint">
-            How it works
+      <Reveal>
+        <div className="mx-auto max-w-[1080px] px-8 pb-16 text-center">
+          <div className="mb-4.5 text-[12.5px] uppercase tracking-wide text-ink-faint">
+            Built for the way agencies actually bill
           </div>
-          <h2 className="font-serif text-[28px] font-medium leading-tight tracking-tight">
-            One question, answered honestly — not a dashboard you have to interpret yourself.
-          </h2>
+          <div className="flex flex-wrap justify-center gap-10 font-serif text-base text-ink-faint">
+            {['Design & dev studios', 'Marketing retainers', 'Consulting firms', 'Small SaaS shops'].map(
+              (item, i) => (
+                <Reveal key={item} delay={i * 80}>
+                  <span className="inline-block cursor-default transition-all duration-300 hover:-translate-y-0.5 hover:text-ink">
+                    {item}
+                  </span>
+                </Reveal>
+              )
+            )}
+          </div>
         </div>
+      </Reveal>
+
+      <section id="how" className="mx-auto max-w-[1080px] border-t border-line px-8 py-18">
+        <Reveal blur>
+          <div className="mb-12 max-w-[540px]">
+            <div className="mb-2.5 text-[12.5px] uppercase tracking-wide text-ink-faint">
+              How it works
+            </div>
+            <h2 className="font-serif text-[28px] font-medium leading-tight tracking-tight">
+              One question, answered honestly — not a dashboard you have to interpret yourself.
+            </h2>
+          </div>
+        </Reveal>
         <div className="grid grid-cols-1 gap-7 md:grid-cols-3">
           <Reveal delay={0}>
             <StepContent
@@ -206,13 +224,13 @@ export default function Landing({ isDark, setIsDark }) {
               body="Read-only access to Stripe. No write permissions — we never touch your billing, only read it."
             />
           </Reveal>
-          <Reveal delay={90}>
+          <Reveal delay={100}>
             <StepContent
               label="Compare"
               body="We group customers by tenure and billing volume, then check who's priced below similar customers."
             />
           </Reveal>
-          <Reveal delay={180}>
+          <Reveal delay={200}>
             <StepContent
               label="Review"
               body="You get a short list of flags in plain language. Mark them reviewed, or dismiss with a reason — it remembers."
@@ -231,16 +249,16 @@ export default function Landing({ isDark, setIsDark }) {
               <span className="text-ledger">We tell you what's worth checking.</span>
             </div>
             <div className="flex flex-col gap-4.5">
-              <PrincipleItem number={1}>
+              <PrincipleItem number={1} delay={0}>
                 <strong className="font-medium text-ink">The math is plain statistics</strong> —
                 peer comparison, not a guess. The numbers you see are auditable, not invented.
               </PrincipleItem>
-              <PrincipleItem number={2}>
+              <PrincipleItem number={2} delay={90}>
                 <strong className="font-medium text-ink">We don't know your reasons</strong> — a
                 discount might be intentional. That's why every flag can be dismissed with a note,
                 permanently.
               </PrincipleItem>
-              <PrincipleItem number={3}>
+              <PrincipleItem number={3} delay={180}>
                 <strong className="font-medium text-ink">You decide, always</strong> — this finds
                 anomalies worth a conversation. It never emails your client or changes a price on
                 its own.
@@ -250,9 +268,8 @@ export default function Landing({ isDark, setIsDark }) {
         </Reveal>
       </section>
 
-      {/* CTA band */}
-      <Reveal>
-        <div className="mx-auto mb-22 max-w-[1016px] rounded-xl bg-[#1C1C1A] px-7 py-14 text-center transition-transform duration-300 hover:-translate-y-0.5 md:px-12">
+      <Reveal blur>
+        <div className="interactive mx-auto mb-22 max-w-[1016px] rounded-xl bg-[#1C1C1A] px-7 py-14 text-center md:px-12">
           <h2 className="mb-3.5 font-serif text-[28px] font-medium text-[#FAF9F6]">
             See what's hiding in your own Stripe data.
           </h2>
@@ -261,16 +278,18 @@ export default function Landing({ isDark, setIsDark }) {
           </p>
           <Link
             to="/dashboard"
-            className="inline-flex items-center gap-1.5 rounded-md border border-[#FAF9F6] bg-[#FAF9F6] px-5.5 py-3 text-[14.5px] font-medium text-[#1C1C1A] transition-colors hover:bg-[#EDEAE0]"
+            className="interactive inline-flex items-center gap-1.5 rounded-md border border-[#FAF9F6] bg-[#FAF9F6] px-5.5 py-3 text-[14.5px] font-medium text-[#1C1C1A] hover:bg-[#EDEAE0]"
           >
             See a live example ↗
           </Link>
         </div>
       </Reveal>
 
-      <footer className="px-8 pb-12 text-center text-[13px] text-ink-faint">
-        Revenue Leak Detector — a quiet second look at your pricing.
-      </footer>
+      <Reveal>
+        <footer className="px-8 pb-12 text-center text-[13px] text-ink-faint">
+          Revenue Leak Detector — a quiet second look at your pricing.
+        </footer>
+      </Reveal>
     </div>
   );
 }

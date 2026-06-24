@@ -31,8 +31,8 @@ function TapeRow({ ariaHidden = false }) {
 
 export default function TickerTape() {
   return (
-    <div className="overflow-hidden border-b border-line bg-paper-warm/60 py-2.5">
-      <div className="flex w-max animate-[tape-scroll_32s_linear_infinite] hover:[animation-play-state:paused]">
+    <div className="overflow-hidden border-b border-line bg-paper-warm/60 py-2.5 transition-colors duration-300">
+      <div className="flex w-max animate-[tape-scroll_32s_linear_infinite] will-change-transform hover:[animation-play-state:paused]">
         <TapeRow />
         <TapeRow ariaHidden />
       </div>

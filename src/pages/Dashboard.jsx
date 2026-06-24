@@ -2,6 +2,7 @@ import { useState } from 'react';
 import Nav from '../components/Nav';
 import FlagCard from '../components/FlagCard';
 import Toast from '../components/Toast';
+import Reveal from '../components/Reveal';
 import { useCountUp } from '../hooks/useCountUp';
 import { flags as initialFlags, summary } from '../data/flags';
 
@@ -9,9 +10,9 @@ export default function Dashboard({ isDark, setIsDark }) {
   const [resolutions, setResolutions] = useState({});
   const [toast, setToast] = useState({ show: false, message: '' });
 
-  const statTotal = useCountUp(summary.customersReviewed, { duration: 700 });
-  const statFlags = useCountUp(summary.flagsFound, { duration: 500, delay: 150 });
-  const statUpside = useCountUp(summary.potentialUpside, { duration: 900, delay: 300 });
+  const statTotal = useCountUp(summary.customersReviewed, { duration: 900 });
+  const statFlags = useCountUp(summary.flagsFound, { duration: 700, delay: 120 });
+  const statUpside = useCountUp(summary.potentialUpside, { duration: 1000, delay: 240 });
 
   const openCount = initialFlags.length - Object.keys(resolutions).length;
 
@@ -33,29 +34,42 @@ export default function Dashboard({ isDark, setIsDark }) {
 
       <div className="mx-auto max-w-[800px] px-6 pb-24 pt-11">
         <header className="mb-9 border-b border-line pb-7.5">
-          <div className="mb-5.5 flex items-center gap-1.5 text-[12.5px] text-ink-faint">
-            <span className="h-1.5 w-1.5 animate-pulse-dot rounded-full bg-ledger" />
+          <div className="mb-5.5 flex animate-rise-in items-center gap-1.5 text-[12.5px] text-ink-faint opacity-0 [animation-delay:0.05s]">
+            <span className="relative flex h-1.5 w-1.5">
+              <span className="absolute inline-flex h-full w-full animate-pulse-dot rounded-full bg-ledger" />
+            </span>
             Connected to Stripe — synced 4 min ago
           </div>
-          <h1 className="mb-2.5 max-w-[520px] font-serif text-[24px] font-medium leading-tight tracking-tight md:text-[28px]">
+          <h1 className="mb-2.5 max-w-[520px] animate-fade-blur-in font-serif text-[24px] font-medium leading-tight tracking-tight opacity-0 [animation-delay:0.12s] md:text-[28px]">
             3 customers are probably underpriced
           </h1>
-          <p className="max-w-[480px] text-[14.5px] text-ink-soft">
+          <p className="max-w-[480px] animate-rise-in text-[14.5px] text-ink-soft opacity-0 [animation-delay:0.22s]">
             Based on tenure, payment history, and how similar customers are priced. These are
             flags worth a look — not instructions.
           </p>
         </header>
 
         <div className="mb-10 grid grid-cols-1 gap-px overflow-hidden rounded-lg border border-line bg-line md:grid-cols-3">
-          <SummaryCell label="Customers reviewed" value={statTotal.toLocaleString()} />
-          <SummaryCell label="Flags found" value={statFlags.toLocaleString()} flagged />
-          <SummaryCell label="Potential annual upside" value={`$${statUpside.toLocaleString()}`} />
+          <SummaryCell label="Customers reviewed" value={statTotal.toLocaleString()} delay={0.28} />
+          <SummaryCell label="Flags found" value={statFlags.toLocaleString()} flagged delay={0.38} />
+          <SummaryCell
+            label="Potential annual upside"
+            value={`$${statUpside.toLocaleString()}`}
+            delay={0.48}
+          />
         </div>
 
-        <div className="mb-4 flex items-center justify-between text-[12.5px] uppercase tracking-wide text-ink-faint">
-          <span>Worth a look</span>
-          <span className="text-ink-soft normal-case tracking-normal">{openCount} open</span>
-        </div>
+        <Reveal delay={0}>
+          <div className="mb-4 flex items-center justify-between text-[12.5px] uppercase tracking-wide text-ink-faint">
+            <span>Worth a look</span>
+            <span
+              key={openCount}
+              className="animate-scale-in text-ink-soft normal-case tracking-normal opacity-0 [animation-delay:0.05s]"
+            >
+              {openCount} open
+            </span>
+          </div>
+        </Reveal>
 
         <div className="mb-12 flex flex-col gap-3.5">
           {initialFlags.map((flag, i) => (
@@ -69,12 +83,14 @@ export default function Dashboard({ isDark, setIsDark }) {
           ))}
         </div>
 
-        <p className="border-t border-line pt-5 text-[13px] leading-relaxed text-ink-faint">
-          <strong className="font-medium text-ink-soft">How this works:</strong> we compare each
-          customer's price against others with similar tenure and billing volume — we don't know
-          your business reasons for a price, so we flag, you decide. Dismissed flags with a reason
-          won't be raised again.
-        </p>
+        <Reveal blur>
+          <p className="border-t border-line pt-5 text-[13px] leading-relaxed text-ink-faint">
+            <strong className="font-medium text-ink-soft">How this works:</strong> we compare each
+            customer's price against others with similar tenure and billing volume — we don't know
+            your business reasons for a price, so we flag, you decide. Dismissed flags with a reason
+            won't be raised again.
+          </p>
+        </Reveal>
       </div>
 
       <Toast message={toast.message} show={toast.show} />
@@ -82,11 +98,18 @@ export default function Dashboard({ isDark, setIsDark }) {
   );
 }
 
-function SummaryCell({ label, value, flagged }) {
+function SummaryCell({ label, value, flagged, delay = 0 }) {
   return (
-    <div className="bg-paper-warm px-5 py-4.5 transition-colors hover:bg-[#EDEAE0] dark:hover:bg-[#222220]">
+    <div
+      className="animate-rise-in bg-paper-warm px-5 py-4.5 opacity-0 transition-colors duration-300 hover:bg-[#EDEAE0] dark:hover:bg-[#222220]"
+      style={{ animationDelay: `${delay}s` }}
+    >
       <div className="mb-1.5 text-[11.5px] uppercase tracking-wide text-ink-faint">{label}</div>
-      <div className={`font-serif text-[23px] font-medium ${flagged ? 'text-flag' : ''}`}>
+      <div
+        className={`font-serif text-[23px] font-medium tabular-nums transition-colors duration-500 ${
+          flagged ? 'text-flag' : ''
+        }`}
+      >
         {value}
       </div>
     </div>
